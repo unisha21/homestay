@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:homestay_app/src/common/route_manager.dart';
 import 'package:homestay_app/src/features/auth/screens/auth_provider.dart';
-import 'package:homestay_app/src/features/shared/data/user_provider.dart';
+import 'package:homestay_app/src/shared/data/user_provider.dart';
 
 class MyDrawer extends ConsumerWidget {
   const MyDrawer({super.key});
@@ -76,28 +76,6 @@ class MyDrawer extends ConsumerWidget {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.add_box_outlined),
-                title: Text(
-                  'Create Listing',
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, '/create-listing');
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.restaurant_menu, size: 24),
-                title: Text(
-                  'My Listings',
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, Routes.myListingRoute);
-                },
-              ),
-              ListTile(
                 leading: const Icon(Icons.chat_bubble_outline, size: 24),
                 title: Text(
                   'Recent Chat',
@@ -127,7 +105,7 @@ class MyDrawer extends ConsumerWidget {
               ListTile(
                 leading: const Icon(Icons.shopping_cart),
                 title: Text(
-                  'Bookings',
+                  'My Bookings',
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
                 onTap: () {

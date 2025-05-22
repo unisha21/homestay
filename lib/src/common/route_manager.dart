@@ -3,7 +3,11 @@ import 'package:homestay_app/src/common/splash_screen.dart';
 import 'package:homestay_app/src/features/auth/screens/login_screen.dart';
 import 'package:homestay_app/src/features/auth/screens/sign_up_screen.dart';
 import 'package:homestay_app/src/features/home/screens/home_screen.dart';
-
+import 'package:homestay_app/src/features/homestay/domain/models/homestay_model.dart';
+import 'package:homestay_app/src/features/homestay/screens/service_detail_screen.dart';
+import 'package:homestay_app/src/features/profile/screens/profile_edit_screen.dart';
+import 'package:homestay_app/src/features/profile/screens/profile_screen.dart';
+import 'package:homestay_app/src/features/profile/screens/support_screen.dart';
 
 class Routes {
   static const String splashRoute = '/';
@@ -39,22 +43,20 @@ class RouteGenerator {
       //   return MaterialPageRoute(builder: (_) => const CreateListingScreen());
       // case Routes.myListingRoute:
       //   return MaterialPageRoute(builder: (_) => const ListingScreen());
-      // case Routes.serviceDetailRoute:
-      //   final args = settings.arguments as HomestayModel;
-      //   return MaterialPageRoute(
-      //     builder: (_) => ServiceDetailScreen(args),
-      //   );
+      case Routes.serviceDetailRoute:
+        final args = settings.arguments as HomestayModel;
+        return MaterialPageRoute(builder: (_) => ServiceDetailScreen(args));
       // case Routes.updateListingRoute:
       //   final args = settings.arguments as HomestayModel;
       //   return MaterialPageRoute(
       //     builder: (_) => UpdateHomestayScreen(homestay: args),
       //   );
-      // case Routes.profileRoute:
-      //   return MaterialPageRoute(builder: (_) => const ProfileScreen());
-      // case Routes.profileEditRoute:
-      //   return MaterialPageRoute(builder: (_) => const ProfileEditScreen());
-      // case Routes.supportRoute:
-      //   return MaterialPageRoute(builder: (_) => const SupportScreen());
+      case Routes.profileRoute:
+        return MaterialPageRoute(builder: (_) => const ProfileScreen());
+      case Routes.profileEditRoute:
+        return MaterialPageRoute(builder: (_) => const ProfileEditScreen());
+      case Routes.supportRoute:
+        return MaterialPageRoute(builder: (_) => const SupportScreen());
       default:
         return unDefinedRoute();
     }

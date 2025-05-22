@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:homestay_app/src/features/home/screens/widgets/main_carousel.dart';
 import 'package:homestay_app/src/features/home/screens/widgets/my_drawer.dart';
+import 'package:homestay_app/src/features/home/screens/widgets/my_listing.dart';
 import 'package:homestay_app/src/themes/extensions.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -67,6 +68,8 @@ class HomeScreen extends StatelessWidget {
           children: [
             SizedBox(height: 20),
             MainCarousel(),
+            SizedBox(height: 20),
+            ListingView(),
           ],
         ),
       ),
