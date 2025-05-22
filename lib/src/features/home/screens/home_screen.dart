@@ -41,7 +41,7 @@ class HomeScreen extends StatelessWidget {
           InkWell(
             splashFactory: InkRipple.splashFactory,
             onTap: () {
-              // Navigator.pushNamed(context, '/search');
+              Navigator.pushNamed(context, '/search');
             },
             child: Padding(
               padding: EdgeInsets.only(right: 10),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:homestay_app/src/common/widgets/build_button.dart';
 import 'package:homestay_app/src/features/homestay/domain/models/homestay_model.dart';
 import 'package:homestay_app/src/features/homestay/screens/widgets/carousel_image.dart';
 import 'package:homestay_app/src/themes/extensions.dart';
@@ -13,98 +14,172 @@ class ServiceDetailScreen extends StatefulWidget {
 }
 
 class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
+  int _personCount = 1; // Initial person count
+
+  void _incrementCount() {
+    setState(() {
+      _personCount++;
+      // You might want to add an upper limit to the count
+    });
+  }
+
+  void _decrementCount() {
+    setState(() {
+      if (_personCount > 1) {
+        // Prevent count from going below 1
+        _personCount--;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
-        spacing: 16,
         children: [
-          AspectRatio(
-            aspectRatio: 16 / 11,
-            child: Stack(
-              children: [
-                CarouselImage(imageUrls: widget._homestay.images),
-                Positioned(
-                  top: 50,
-                  left: 12,
-                  child: InkWell(
-                    onTap: () => Navigator.of(context).pop(),
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: context.theme.colorScheme.surface.withAlpha(200),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.arrow_back,
-                        color: context.theme.colorScheme.onSurface,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+          Expanded(
+            child: SingleChildScrollView(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 8,
+                spacing: 16,
                 children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  AspectRatio(
+                    aspectRatio: 16 / 11,
+                    child: Stack(
                       children: [
-                        Text(
-                          widget._homestay.title,
-                          style: context.theme.textTheme.titleLarge,
-                        ),
-                        Text(
-                          '4.2 ⭐',
-                          style: context.theme.textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
+                        CarouselImage(imageUrls: widget._homestay.images),
+                        Positioned(
+                          top: 50,
+                          left: 12,
+                          child: InkWell(
+                            onTap: () => Navigator.of(context).pop(),
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: context.theme.colorScheme.surface
+                                    .withAlpha(200),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.arrow_back,
+                                color: context.theme.colorScheme.onSurface,
+                              ),
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
-                  Row(
-                    spacing: 8,
-                    children: [
-                      Icon(
-                        Icons.pin_drop_outlined,
-                        color: context.theme.colorScheme.primary,
-                        size: 16,
+                  SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        spacing: 8,
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  widget._homestay.title,
+                                  style: context.theme.textTheme.titleLarge,
+                                ),
+                                Text(
+                                  '4.2 ⭐',
+                                  style: context.theme.textTheme.bodyMedium
+                                      ?.copyWith(fontWeight: FontWeight.w600),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Row(
+                            spacing: 8,
+                            children: [
+                              Icon(
+                                Icons.pin_drop_outlined,
+                                color: context.theme.colorScheme.primary,
+                                size: 16,
+                              ),
+                              Text(
+                                widget._homestay.location,
+                                style: context.theme.textTheme.bodyMedium,
+                              ),
+                            ],
+                          ),
+                          Text(
+                            widget._homestay.description,
+                            style: context.theme.textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w400,
+                              color: context.theme.colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'What\'s included',
+                            style: context.theme.textTheme.titleMedium
+                                ?.copyWith(fontWeight: FontWeight.w600),
+                          ),
+                          _IncludedAmenities(
+                            amenities: widget._homestay.amenities,
+                          ),
+                          const SizedBox(height: 4),
+                          NearByPlaces(
+                            nearBy: widget._homestay.nearByPlaces ?? [],
+                          ),
+                          const SizedBox(height: 4),
+                          OwnerInfo(user: widget._homestay.user),
+                        ],
                       ),
-                      Text(
-                        widget._homestay.location,
-                        style: context.theme.textTheme.bodyMedium,
-                      ),
-                    ],
-                  ),
-                  Text(
-                    widget._homestay.description,
-                    style: context.theme.textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w400,
-                      color: context.theme.colorScheme.onSurfaceVariant,
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'What\'s included',
-                    style: context.theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  _IncludedAmenities(amenities: widget._homestay.amenities),
-                  const SizedBox(height: 4),
-                  NearByPlaces(nearBy: widget._homestay.nearByPlaces ?? []),
-                  const SizedBox(height: 4),
-                  OwnerInfo(user: widget._homestay.user),
                 ],
               ),
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
+            decoration: BoxDecoration(
+              color: context.theme.colorScheme.surface,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(16),
+                topRight: Radius.circular(16),
+              ),
+            ),
+            child: Row(
+              // Changed from Center to Row
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  // Group for person count controls
+                  children: [
+                    IconButton(
+                      icon: Icon(
+                        Icons.remove_circle_outline,
+                        color: context.theme.colorScheme.primary,
+                      ),
+                      onPressed: _decrementCount,
+                      tooltip: 'Decrease persons',
+                    ),
+                    Text(
+                      '$_personCount',
+                      style: context.theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.add_circle_outline,
+                        color: context.theme.colorScheme.primary,
+                      ),
+                      onPressed: _incrementCount,
+                      tooltip: 'Increase persons',
+                    ),
+                  ],
+                ),
+                const SizedBox(width: 16),
+                Expanded(child: BuildButton(onPressed: () {}, buttonWidget: Text('Book Now'))),
+              ],
             ),
           ),
         ],
@@ -164,7 +239,7 @@ class NearByPlaces extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if(nearBy.isEmpty) {
+    if (nearBy.isEmpty) {
       return const SizedBox.shrink();
     }
     return Column(

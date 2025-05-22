@@ -6,7 +6,7 @@ class HomestayModel {
   final String title;
   final String description;
   final String location;
-  final String pricePerNight;
+  final double pricePerNight;
   final List<String> amenities;
   final List<String> images;
   final List<NearByPlace>? nearByPlaces;
@@ -32,7 +32,7 @@ class HomestayModel {
       title: json['title'] as String,
       description: json['description'] as String,
       location: json['location'] as String,
-      pricePerNight: json['pricePerNight'] as String,
+      pricePerNight: (json['pricePerNight'] as num).toDouble(),
       amenities: List<String>.from(json['amenities'] as List<dynamic>),
       images: List<String>.from(json['images'] as List<dynamic>),
       nearByPlaces:

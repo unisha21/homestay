@@ -62,13 +62,9 @@ class ListingCard extends StatelessWidget {
 
   const ListingCard({super.key, required this.homestay});
 
-  double get pricePerNight {
-    final price = homestay.pricePerNight;
-    return double.tryParse(price) ?? 0.0;
-  }
 
     String get formattedPrice {
-    final price = double.tryParse(homestay.pricePerNight) ?? 0.0;
+    final price = homestay.pricePerNight;
     final formatter = NumberFormat.currency(
       locale: 'en_US',
       symbol: 'NPR ',

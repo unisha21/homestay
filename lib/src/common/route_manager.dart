@@ -8,6 +8,7 @@ import 'package:homestay_app/src/features/homestay/screens/service_detail_screen
 import 'package:homestay_app/src/features/profile/screens/profile_edit_screen.dart';
 import 'package:homestay_app/src/features/profile/screens/profile_screen.dart';
 import 'package:homestay_app/src/features/profile/screens/support_screen.dart';
+import 'package:homestay_app/src/features/search/screens/search_screen.dart';
 
 class Routes {
   static const String splashRoute = '/';
@@ -39,6 +40,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const SignUpScreen());
       case Routes.homeRoute:
         return MaterialPageRoute(builder: (_) => const HomeScreen());
+      case Routes.searchRoute:
+        return MaterialPageRoute(builder: (_) => const SearchScreen());
       // case Routes.createListingRoute:
       //   return MaterialPageRoute(builder: (_) => const CreateListingScreen());
       // case Routes.myListingRoute:
