@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:homestay_app/src/common/splash_screen.dart';
 import 'package:homestay_app/src/features/auth/screens/login_screen.dart';
 import 'package:homestay_app/src/features/auth/screens/sign_up_screen.dart';
+import 'package:homestay_app/src/features/booking/screens/booking_screen.dart';
 import 'package:homestay_app/src/features/home/screens/home_screen.dart';
 import 'package:homestay_app/src/features/homestay/domain/models/homestay_model.dart';
 import 'package:homestay_app/src/features/homestay/screens/service_detail_screen.dart';
@@ -27,6 +28,7 @@ class Routes {
   static const String profileEditRoute = '/profile-edit';
   static const String searchRoute = '/search';
   static const String paymentHistoryRoute = '/payment-history';
+  static const String bookingRoute = '/booking';
 }
 
 class RouteGenerator {
@@ -60,6 +62,15 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const ProfileEditScreen());
       case Routes.supportRoute:
         return MaterialPageRoute(builder: (_) => const SupportScreen());
+      case Routes.bookingRoute:
+        final args = settings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(
+          builder:
+              (_) => BookingScreen(
+                homestayId: args['homestayId'],
+                numberOfGuests: args['numberOfGuests'],
+              ),
+        );
       default:
         return unDefinedRoute();
     }
