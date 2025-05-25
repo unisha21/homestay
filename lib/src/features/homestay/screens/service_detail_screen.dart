@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:homestay_app/src/common/route_manager.dart';
 import 'package:homestay_app/src/common/widgets/build_button.dart';
 import 'package:homestay_app/src/features/homestay/domain/models/homestay_model.dart';
 import 'package:homestay_app/src/features/homestay/screens/widgets/carousel_image.dart';
@@ -178,7 +179,23 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                   ],
                 ),
                 const SizedBox(width: 16),
-                Expanded(child: BuildButton(onPressed: () {}, buttonWidget: Text('Book Now'))),
+                Expanded(
+                  child: BuildButton(
+                    onPressed: () {
+                      // Navigate to BookingScreen
+                      Navigator.pushNamed(
+                        context,
+                        Routes.bookingRoute,
+                        arguments: {
+                          "homestayId": widget._homestay.id,
+                          "numberOfGuests": _personCount,
+                        },
+                      );
+                    },
+
+                    buttonWidget: Text('Book Now'),
+                  ),
+                ),
               ],
             ),
           ),
