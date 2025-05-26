@@ -5,6 +5,7 @@ enum BookingStatus { pending, confirmed, cancelled, completed }
 @immutable
 class BookingModel {
   final String homestayId;
+  final String customerId;
   final String userName;
   final String userPhone;
   final DateTime checkInDate;
@@ -13,8 +14,10 @@ class BookingModel {
   final double pricePerNight;
   final double totalPrice;
   final String? notes;
+
   const BookingModel({
     required this.homestayId,
+    required this.customerId,
     required this.userName,
     required this.userPhone,
     required this.checkInDate,
@@ -29,6 +32,7 @@ class BookingModel {
   BookingModel copyWith({
     String? id,
     String? homestayId,
+    String? customerId,
     String? userId,
     String? userName,
     String? userPhone,
@@ -44,6 +48,7 @@ class BookingModel {
   }) {
     return BookingModel(
       homestayId: homestayId ?? this.homestayId,
+      customerId: customerId ?? this.customerId,
       userName: userName ?? this.userName,
       userPhone: userPhone ?? this.userPhone,
       checkInDate: checkInDate ?? this.checkInDate,
@@ -59,6 +64,7 @@ class BookingModel {
   Map<String, dynamic> toJson() {
     return {
       'homestayId': homestayId,
+      'customerId': customerId,
       'userName': userName,
       'userPhone': userPhone,
       'checkInDate': checkInDate.toIso8601String(),
@@ -74,6 +80,7 @@ class BookingModel {
   factory BookingModel.fromJson(Map<String, dynamic> json) {
     return BookingModel(
       homestayId: json['homestayId'] as String,
+      customerId: json['customerId'] as String,
       userName: json['userName'] as String,
       userPhone: json['userPhone'] as String,
       checkInDate: DateTime.parse(json['checkInDate'] as String),

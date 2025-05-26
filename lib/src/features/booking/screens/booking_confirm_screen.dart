@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:homestay_app/src/common/widgets/build_button.dart';
+import 'package:homestay_app/src/features/homestay/domain/models/homestay_model.dart';
+import 'package:homestay_app/src/features/order/domain/order_model.dart';
 import 'package:homestay_app/src/themes/extensions.dart';
 import 'package:intl/intl.dart';
 import 'package:homestay_app/src/features/booking/domain/model/booking_model.dart'; // Added import
+import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 
 class BookingConfirmScreen extends StatelessWidget {
   final BookingModel booking;
+  final HomestayModel homestay;
 
-  const BookingConfirmScreen({super.key, required this.booking});
+  const BookingConfirmScreen({super.key, required this.booking, required this.homestay});
 
   @override
   Widget build(BuildContext context) {
@@ -108,12 +112,29 @@ class BookingConfirmScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             BuildButton(
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Redirecting to payment gateway...'),
+              onPressed: () async {
+                final navigator = Navigator.of(context);
+                OrderModel order = OrderModel(
+                  orderId: '',
+                  orderDetail: OrderDetail(
+                    customerId: booking.customerId,
+                    customerName: booking.userName,
+                    customerPhone: booking.userPhone,
+                    orderDate: booking.checkInDate.toIso8601String(),
+                    numberOfNights: booking.numberOfNights,
+                    numberOfGuests: booking.numberOfGuests,
                   ),
+                  advancePayment: (booking.totalPrice * 0.3).toStringAsFixed(2),
+                  price: booking.pricePerNight.toStringAsFixed(2),
+                  hostId: homestay.hostId,
+                  status: OrderStatus.pending,
+                  user: const types.User(id: ''),
                 );
+                // ScaffoldMessenger.of(context).showSnackBar(
+                //   const SnackBar(
+                //     content: Text('Redirecting to payment gateway...'),
+                //   ),
+                // );
               },
               buttonWidget: const Text('Pay Now'),
             ),

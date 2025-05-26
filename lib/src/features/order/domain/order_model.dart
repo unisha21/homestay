@@ -52,7 +52,6 @@ class OrderModel {
 class OrderDetail {
   final String customerId;
   final String customerName;
-  final String customerAddress;
   final String customerPhone;
   final String orderDate;
   final int numberOfNights;
@@ -61,7 +60,6 @@ class OrderDetail {
   const OrderDetail({
     required this.customerId,
     required this.customerName,
-    required this.customerAddress,
     required this.customerPhone,
     required this.orderDate,
     required this.numberOfNights,
@@ -73,7 +71,6 @@ class OrderDetail {
     return OrderDetail(
       customerId: json['customerId'] as String,
       customerName: json['customerName'] as String,
-      customerAddress: json['customerAddress'] as String,
       customerPhone: json['customerPhone'] as String,
       orderDate: json['orderDate'] as String,
       numberOfNights: json['numberOfNights'] as int,
@@ -86,7 +83,6 @@ class OrderDetail {
     return {
       'customerId': customerId,
       'customerName': customerName,
-      'customerAddress': customerAddress,
       'customerPhone': customerPhone,
       'orderDate': orderDate,
       'numberOfNights': numberOfNights,

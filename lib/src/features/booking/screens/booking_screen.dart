@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:homestay_app/src/common/widgets/build_button.dart';
 import 'package:homestay_app/src/features/homestay/domain/models/homestay_model.dart';
+import 'package:homestay_app/src/shared/data/user_provider.dart';
 import 'package:homestay_app/src/themes/extensions.dart';
 import 'package:homestay_app/src/features/booking/screens/booking_confirm_screen.dart';
 import 'package:homestay_app/src/features/booking/domain/model/booking_model.dart';
@@ -68,7 +70,7 @@ class _BookingScreenState extends State<BookingScreen> {
     }
   }
 
-  void _submitBooking() {
+  void _submitBooking(String userId) {
     if (_formKey.currentState!.validate()) {
       // Assuming a fixed price per night for now, you might fetch this from homestay details
       const double pricePerNight = 50.0;
@@ -85,6 +87,7 @@ class _BookingScreenState extends State<BookingScreen> {
       }
 
       final booking = BookingModel(
+        customerId: userId,
         homestayId: widget.homestayId,
         userName: _nameController.text,
         userPhone: _phoneController.text,
@@ -99,7 +102,11 @@ class _BookingScreenState extends State<BookingScreen> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => BookingConfirmScreen(booking: booking),
+          builder:
+              (context) => BookingConfirmScreen(
+                booking: booking,
+                homestay: widget.homestayDetails,
+              ),
         ),
       );
     }
@@ -114,113 +121,131 @@ class _BookingScreenState extends State<BookingScreen> {
         backgroundColor: context.theme.colorScheme.surface,
         surfaceTintColor: Colors.transparent,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: 16,
-            children: <Widget>[
-              Text(
-                'Confirm your details and book',
-                style: context.theme.textTheme.titleLarge,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Full Name',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.person_outline),
+      body: Consumer(
+        builder: (context, ref, _) {
+          final userData = ref.watch(singleUserProvider);
+          return userData.when(
+            data: (data) {
+              _nameController.text = data.firstName ?? '';
+              _phoneController.text = data.metadata!['phone'];
+              return SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    spacing: 16,
+                    children: <Widget>[
+                      Text(
+                        'Confirm your details and book',
+                        style: context.theme.textTheme.titleLarge,
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _nameController,
+                        decoration: const InputDecoration(
+                          labelText: 'Full Name',
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.person_outline),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your name';
+                          }
+                          return null;
+                        },
+                      ),
+                      TextFormField(
+                        controller: _phoneController,
+                        decoration: const InputDecoration(
+                          labelText: 'Phone Number',
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.phone_outlined),
+                        ),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                        ],
+                        maxLength: 10,
+                        keyboardType: TextInputType.phone,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your phone number';
+                          }
+                          // Add more sophisticated phone validation if needed
+                          return null;
+                        },
+                      ),
+                      TextFormField(
+                        readOnly: true,
+                        controller: _dateController,
+                        decoration: const InputDecoration(
+                          labelText: 'Check-in Date',
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.calendar_today_outlined),
+                        ),
+                        onTap: () {
+                          _selectDate(context); // Show date picker on tap
+                        },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please select a check-in date';
+                          }
+                          return null;
+                        },
+                      ),
+                      TextFormField(
+                        initialValue: widget.numberOfGuests.toString(),
+                        decoration: const InputDecoration(
+                          labelText: 'Total Guests',
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.group_outlined),
+                        ),
+                        readOnly: true, // Pre-filled from detail screen
+                      ),
+                      TextFormField(
+                        controller: _nightsController,
+                        decoration: const InputDecoration(
+                          labelText: 'Total Nights Stay',
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.night_shelter_outlined),
+                        ),
+                        keyboardType: TextInputType.number,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter the number of nights';
+                          }
+                          if (int.tryParse(value) == null ||
+                              int.parse(value) <= 0) {
+                            return 'Please enter a valid number of nights';
+                          }
+                          return null;
+                        },
+                      ),
+                      TextFormField(
+                        controller: _notesController,
+                        decoration: const InputDecoration(
+                          labelText: 'Additional Notes (Optional)',
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.note_alt_outlined),
+                        ),
+                        maxLines: 3,
+                      ),
+                      const SizedBox(height: 24),
+                      BuildButton(
+                        onPressed: () => _submitBooking(data.id),
+                        buttonWidget: const Text(
+                          'Confirm and Proceed to Payment',
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your name';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _phoneController,
-                decoration: const InputDecoration(
-                  labelText: 'Phone Number',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.phone_outlined),
-                ),
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                maxLength: 10,
-                keyboardType: TextInputType.phone,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your phone number';
-                  }
-                  // Add more sophisticated phone validation if needed
-                  return null;
-                },
-              ),
-              TextFormField(
-                readOnly: true,
-                controller: _dateController,
-                decoration: const InputDecoration(
-                  labelText: 'Check-in Date',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.calendar_today_outlined),
-                ),
-                onTap: () {
-                  _selectDate(context); // Show date picker on tap
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please select a check-in date';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                initialValue: widget.numberOfGuests.toString(),
-                decoration: const InputDecoration(
-                  labelText: 'Total Guests',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.group_outlined),
-                ),
-                readOnly: true, // Pre-filled from detail screen
-              ),
-              TextFormField(
-                controller: _nightsController,
-                decoration: const InputDecoration(
-                  labelText: 'Total Nights Stay',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.night_shelter_outlined),
-                ),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the number of nights';
-                  }
-                  if (int.tryParse(value) == null || int.parse(value) <= 0) {
-                    return 'Please enter a valid number of nights';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _notesController,
-                decoration: const InputDecoration(
-                  labelText: 'Additional Notes (Optional)',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.note_alt_outlined),
-                ),
-                maxLines: 3,
-              ),
-              const SizedBox(height: 24),
-              BuildButton(
-                onPressed: _submitBooking,
-                buttonWidget: const Text('Confirm and Proceed to Payment'),
-              ),
-            ],
-          ),
-        ),
+              );
+            },
+            error: (error, stackTrace) => Center(child: Text('$error')),
+            loading: () => const Center(child: CircularProgressIndicator()),
+          );
+        },
       ),
     );
   }
