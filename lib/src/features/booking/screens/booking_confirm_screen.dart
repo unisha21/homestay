@@ -7,10 +7,7 @@ import 'package:homestay_app/src/features/booking/domain/model/booking_model.dar
 class BookingConfirmScreen extends StatelessWidget {
   final BookingModel booking;
 
-  const BookingConfirmScreen({
-    super.key,
-    required this.booking,
-  });
+  const BookingConfirmScreen({super.key, required this.booking});
 
   @override
   Widget build(BuildContext context) {
@@ -38,9 +35,21 @@ class BookingConfirmScreen extends StatelessWidget {
             const SizedBox(height: 16), // Added for spacing
             _buildSummaryRow(context, 'Name:', booking.userName),
             _buildSummaryRow(context, 'Phone:', booking.userPhone),
-            _buildSummaryRow(context, 'Check-in Date:', dateFormat.format(booking.checkInDate)),
-            _buildSummaryRow(context, 'Number of Nights:', '${booking.numberOfNights}'),
-            _buildSummaryRow(context, 'Number of Guests:', '${booking.numberOfGuests}'),
+            _buildSummaryRow(
+              context,
+              'Check-in Date:',
+              dateFormat.format(booking.checkInDate),
+            ),
+            _buildSummaryRow(
+              context,
+              'Number of Nights:',
+              '${booking.numberOfNights}',
+            ),
+            _buildSummaryRow(
+              context,
+              'Number of Guests:',
+              '${booking.numberOfGuests}',
+            ),
             if (booking.notes != null && booking.notes!.isNotEmpty)
               _buildSummaryRow(context, 'Additional Notes:', booking.notes!),
             const Divider(height: 32, thickness: 1),
@@ -49,7 +58,7 @@ class BookingConfirmScreen extends StatelessWidget {
               children: [
                 Text(
                   'Total Price:',
-                  style: context.theme.textTheme.titleLarge?.copyWith(
+                  style: context.theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -60,18 +69,50 @@ class BookingConfirmScreen extends StatelessWidget {
                     decimalDigits: 2,
                   ).format(booking.totalPrice),
                   // '${booking.totalPrice.toStringAsFixed(2)}', // Format to 2 decimal places
-                  style: context.theme.textTheme.titleLarge?.copyWith(
+                  style: context.theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: context.theme.colorScheme.primary,
                   ),
                 ),
               ],
             ),
+            const SizedBox(height: 16), // Added for spacing
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Booking amount:',
+                  style: context.theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Text(
+                  NumberFormat.currency(
+                    locale: 'en_np',
+                    symbol: 'NPR ',
+                    decimalDigits: 2,
+                  ).format(booking.totalPrice * 0.3),
+                  style: context.theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Note: 30% of the total amount is needed to confirm your booking.',
+              style: context.theme.textTheme.bodySmall?.copyWith(
+                fontStyle: FontStyle.italic,
+                color: context.theme.colorScheme.onSurface.withOpacity(0.7),
+              ),
+            ),
             const SizedBox(height: 24),
             BuildButton(
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Redirecting to payment gateway...')),
+                  const SnackBar(
+                    content: Text('Redirecting to payment gateway...'),
+                  ),
                 );
               },
               buttonWidget: const Text('Pay Now'),
@@ -87,7 +128,8 @@ class BookingConfirmScreen extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start, // Align items to start for long values
+        crossAxisAlignment:
+            CrossAxisAlignment.start, // Align items to start for long values
         children: [
           Text(
             label,

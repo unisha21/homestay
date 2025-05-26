@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:homestay_app/src/common/widgets/build_button.dart';
 import 'package:homestay_app/src/features/homestay/domain/models/homestay_model.dart';
 import 'package:homestay_app/src/themes/extensions.dart';
@@ -35,7 +36,10 @@ class _BookingScreenState extends State<BookingScreen> {
     super.initState();
     _nightsController.text = '1'; // Default to 1 night
     _selectedDate = DateTime.now(); // Default to current date
-    _dateController.text = "${_selectedDate!.toLocal()}".split(' ')[0]; // Format date as YYYY-MM-DD
+    _dateController.text =
+        "${_selectedDate!.toLocal()}".split(
+          ' ',
+        )[0]; // Format date as YYYY-MM-DD
   }
 
   @override
@@ -58,7 +62,8 @@ class _BookingScreenState extends State<BookingScreen> {
     if (picked != null && picked != _selectedDate) {
       setState(() {
         _selectedDate = picked;
-        _dateController.text = "${_selectedDate!.toLocal()}".split(' ')[0]; // Format date
+        _dateController.text =
+            "${_selectedDate!.toLocal()}".split(' ')[0]; // Format date
       });
     }
   }
@@ -69,7 +74,8 @@ class _BookingScreenState extends State<BookingScreen> {
       const double pricePerNight = 50.0;
       final int nights = int.tryParse(_nightsController.text) ?? 1;
       final int guests = widget.numberOfGuests;
-      final double totalPrice = widget.homestayDetails.pricePerNight * nights * guests;
+      final double totalPrice =
+          widget.homestayDetails.pricePerNight * nights * guests;
       DateTime checkInDate;
       try {
         checkInDate = DateTime.parse(_dateController.text);
@@ -77,7 +83,6 @@ class _BookingScreenState extends State<BookingScreen> {
         // Handle invalid date format, perhaps show an error or default
         checkInDate = DateTime.now(); // Fallback, ideally validate earlier
       }
-
 
       final booking = BookingModel(
         homestayId: widget.homestayId,
@@ -94,9 +99,7 @@ class _BookingScreenState extends State<BookingScreen> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => BookingConfirmScreen(
-            booking: booking,
-          ),
+          builder: (context) => BookingConfirmScreen(booking: booking),
         ),
       );
     }
@@ -145,6 +148,8 @@ class _BookingScreenState extends State<BookingScreen> {
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.phone_outlined),
                 ),
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                maxLength: 10,
                 keyboardType: TextInputType.phone,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
