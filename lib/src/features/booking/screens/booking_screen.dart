@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:homestay_app/src/common/widgets/build_button.dart';
+import 'package:homestay_app/src/features/homestay/domain/models/homestay_model.dart';
 import 'package:homestay_app/src/themes/extensions.dart';
+import 'package:homestay_app/src/features/booking/screens/booking_confirm_screen.dart';
+import 'package:homestay_app/src/features/booking/domain/model/booking_model.dart';
 
 class BookingScreen extends StatefulWidget {
   final String homestayId;
   final int numberOfGuests;
+  final HomestayModel homestayDetails;
 
   const BookingScreen({
     super.key,
     required this.homestayId,
     required this.numberOfGuests,
+    required this.homestayDetails,
   });
 
   @override
@@ -22,11 +27,15 @@ class _BookingScreenState extends State<BookingScreen> {
   final _phoneController = TextEditingController();
   final _nightsController = TextEditingController();
   final _notesController = TextEditingController();
+  final _dateController = TextEditingController(); // Added date controller
+  DateTime? _selectedDate; // Added to store the selected date
 
   @override
   void initState() {
     super.initState();
     _nightsController.text = '1'; // Default to 1 night
+    _selectedDate = DateTime.now(); // Default to current date
+    _dateController.text = "${_selectedDate!.toLocal()}".split(' ')[0]; // Format date as YYYY-MM-DD
   }
 
   @override
@@ -35,24 +44,60 @@ class _BookingScreenState extends State<BookingScreen> {
     _phoneController.dispose();
     _nightsController.dispose();
     _notesController.dispose();
+    _dateController.dispose(); // Dispose date controller
     super.dispose();
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate ?? DateTime.now(),
+      firstDate: DateTime.now(), // Users can't select past dates
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+        _dateController.text = "${_selectedDate!.toLocal()}".split(' ')[0]; // Format date
+      });
+    }
   }
 
   void _submitBooking() {
     if (_formKey.currentState!.validate()) {
-      // Process booking
-      // For now, just print the details
-      print('Booking Details:');
-      print('Homestay ID: ${widget.homestayId}');
-      print('Name: ${_nameController.text}');
-      print('Phone: ${_phoneController.text}');
-      print('Guests: ${widget.numberOfGuests}');
-      print('Nights: ${_nightsController.text}');
-      print('Notes: ${_notesController.text}');
+      // Assuming a fixed price per night for now, you might fetch this from homestay details
+      const double pricePerNight = 50.0;
+      final int nights = int.tryParse(_nightsController.text) ?? 1;
+      final int guests = widget.numberOfGuests;
+      final double totalPrice = widget.homestayDetails.pricePerNight * nights * guests;
+      DateTime checkInDate;
+      try {
+        checkInDate = DateTime.parse(_dateController.text);
+      } catch (e) {
+        // Handle invalid date format, perhaps show an error or default
+        checkInDate = DateTime.now(); // Fallback, ideally validate earlier
+      }
 
-      // Navigate to payment or confirmation screen
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Proceeding to payment...')), // Placeholder
+
+      final booking = BookingModel(
+        homestayId: widget.homestayId,
+        userName: _nameController.text,
+        userPhone: _phoneController.text,
+        checkInDate: checkInDate,
+        numberOfNights: nights,
+        numberOfGuests: guests,
+        pricePerNight: pricePerNight,
+        notes: _notesController.text.isNotEmpty ? _notesController.text : null,
+        totalPrice: totalPrice,
+      );
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => BookingConfirmScreen(
+            booking: booking,
+          ),
+        ),
       );
     }
   }
@@ -106,6 +151,24 @@ class _BookingScreenState extends State<BookingScreen> {
                     return 'Please enter your phone number';
                   }
                   // Add more sophisticated phone validation if needed
+                  return null;
+                },
+              ),
+              TextFormField(
+                readOnly: true,
+                controller: _dateController,
+                decoration: const InputDecoration(
+                  labelText: 'Check-in Date',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.calendar_today_outlined),
+                ),
+                onTap: () {
+                  _selectDate(context); // Show date picker on tap
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please select a check-in date';
+                  }
                   return null;
                 },
               ),

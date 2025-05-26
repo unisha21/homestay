@@ -5,6 +5,7 @@ import 'package:homestay_app/src/common/widgets/build_button.dart';
 import 'package:homestay_app/src/features/homestay/domain/models/homestay_model.dart';
 import 'package:homestay_app/src/features/homestay/screens/widgets/carousel_image.dart';
 import 'package:homestay_app/src/themes/extensions.dart';
+import 'package:intl/intl.dart';
 
 class ServiceDetailScreen extends StatefulWidget {
   final HomestayModel _homestay;
@@ -95,16 +96,28 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                             ),
                           ),
                           Row(
-                            spacing: 8,
                             children: [
-                              Icon(
-                                Icons.pin_drop_outlined,
-                                color: context.theme.colorScheme.primary,
-                                size: 16,
+                              Row(
+                                spacing: 8,
+                                children: [
+                                  Icon(
+                                    Icons.pin_drop_outlined,
+                                    color: context.theme.colorScheme.primary,
+                                    size: 16,
+                                  ),
+                                  Text(
+                                    widget._homestay.location,
+                                    style: context.theme.textTheme.bodyMedium,
+                                  ),
+                                ],
                               ),
+                              const Spacer(),
                               Text(
-                                widget._homestay.location,
-                                style: context.theme.textTheme.bodyMedium,
+                                NumberFormat.currency(
+                                  locale: 'en_np',
+                                  symbol: 'NPR ',
+                                  decimalDigits: 2,
+                                ).format(widget._homestay.pricePerNight),
                               ),
                             ],
                           ),
@@ -182,17 +195,16 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                 Expanded(
                   child: BuildButton(
                     onPressed: () {
-                      // Navigate to BookingScreen
                       Navigator.pushNamed(
                         context,
                         Routes.bookingRoute,
                         arguments: {
                           "homestayId": widget._homestay.id,
                           "numberOfGuests": _personCount,
+                          "homestayDetails": widget._homestay,
                         },
                       );
                     },
-
                     buttonWidget: Text('Book Now'),
                   ),
                 ),

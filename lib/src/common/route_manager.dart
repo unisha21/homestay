@@ -69,6 +69,7 @@ class RouteGenerator {
               (_) => BookingScreen(
                 homestayId: args['homestayId'],
                 numberOfGuests: args['numberOfGuests'],
+                homestayDetails: args['homestayDetails'] as HomestayModel,
               ),
         );
       default:
