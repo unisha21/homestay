@@ -1,3 +1,4 @@
+import 'package:homestay_app/src/common/route_manager.dart';
 import 'package:homestay_app/src/features/auth/screens/auth_provider.dart';
 import 'package:homestay_app/src/features/profile/data/update_image_provider.dart';
 import 'package:homestay_app/src/features/profile/screens/widgets/option_card.dart';
@@ -167,7 +168,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           text: 'Payment',
                           subText: 'Payment history',
                           onPressed: (){
-                            Navigator.pushNamed(context, "/payment-history");
+                            Navigator.pushNamed(context, Routes.paymentHistoryRoute);
                           },
                         ),
                         SizedBox(height: 10,),

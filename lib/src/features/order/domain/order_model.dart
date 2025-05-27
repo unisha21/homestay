@@ -60,6 +60,8 @@ class OrderDetail {
   final int numberOfNights;
   final int numberOfGuests;
   final String? notes;
+  final String homeStayName;
+
   const OrderDetail({
     required this.customerId,
     required this.customerName,
@@ -68,6 +70,7 @@ class OrderDetail {
     required this.numberOfNights,
     required this.numberOfGuests,
     this.notes,
+    required this.homeStayName,
   });
 
   factory OrderDetail.fromJson(Map<String, dynamic> json) {
@@ -79,6 +82,7 @@ class OrderDetail {
       numberOfNights: json['numberOfNights'] as int,
       numberOfGuests: json['numberOfGuests'] as int,
       notes: json['notes'] as String?,
+      homeStayName: json['homeStayName'] as String,
     );
   }
 

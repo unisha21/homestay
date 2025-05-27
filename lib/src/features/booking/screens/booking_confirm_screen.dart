@@ -5,6 +5,7 @@ import 'package:homestay_app/src/features/auth/screens/widgets/build_dialogs.dar
 import 'package:homestay_app/src/features/homestay/domain/models/homestay_model.dart';
 import 'package:homestay_app/src/features/order/data/order_datasource.dart';
 import 'package:homestay_app/src/features/order/domain/order_model.dart';
+import 'package:homestay_app/src/features/payment/data/payment_datasource.dart';
 import 'package:homestay_app/src/themes/extensions.dart';
 import 'package:intl/intl.dart';
 import 'package:homestay_app/src/features/booking/domain/model/booking_model.dart'; // Added import
@@ -144,6 +145,7 @@ class BookingConfirmScreen extends StatelessWidget {
                     orderDate: booking.checkInDate.toIso8601String(),
                     numberOfNights: booking.numberOfNights,
                     numberOfGuests: booking.numberOfGuests,
+                    homeStayName: homestay.title,
                   ),
                   advancePayment: (booking.totalPrice * 0.3).toStringAsFixed(2),
                   price: homestay.pricePerNight.toString(),
@@ -157,6 +159,11 @@ class BookingConfirmScreen extends StatelessWidget {
                   config: config,
                   onSuccess: (value) async {
                     final response = await OrderDatasource().placeOrder(order);
+                    await PaymentDataSource().addPayment(
+                      order,
+                      value.idx,
+                      value.token,
+                    );
                     navigator.pop();
                     if (response == 'Order Placed Successfully') {
                       // await ChatDataSource().sendNotification(
