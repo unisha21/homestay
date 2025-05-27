@@ -24,6 +24,11 @@ class OrderModel {
   });
 
   factory OrderModel.fromJson(Map<String, dynamic> json) {
+    final statusIndex = json['orderStatus'] as int? ?? OrderStatus.pending.index;
+    final status = (statusIndex >= 0 && statusIndex < OrderStatus.values.length)
+        ? OrderStatus.values[statusIndex]
+        : OrderStatus.pending;
+
     return OrderModel(
       orderId: json['orderId'] as String,
       orderDetail: OrderDetail.fromJson(json['orderInfo']),
@@ -31,10 +36,7 @@ class OrderModel {
       price: json['price'] as String,
       hostId: json['hostId'] as String,
       homeStayId: json['homeStayId'] as String,
-      status: OrderStatus.values.firstWhere(
-        (e) => e.toString() == 'OrderStatus.${json['status']}',
-        orElse: () => OrderStatus.pending,
-      ),
+      status: status, // Use the correctly parsed status
       user: json['user'],
     );
   }
@@ -42,11 +44,12 @@ class OrderModel {
   Map<String, dynamic> toJson() {
     return {
       'orderId': orderId,
-      'orderDetail': orderDetail, // Assuming you have a method to convert this
+      'orderDetail': orderDetail.toJson(), // Ensure toJson is implemented in OrderDetail
       'advancePayment': advancePayment,
       'price': price,
       'hostId': hostId,
-      'status': status.toString().split('.').last,
+      'homeStayId': homeStayId, // Added homeStayId
+      'orderStatus': status.index, // Store status as index
       'user': user.toJson(),
     };
   }
@@ -95,6 +98,7 @@ class OrderDetail {
       'numberOfNights': numberOfNights,
       'numberOfGuests': numberOfGuests,
       'notes': notes,
+      'homeStayName': homeStayName,
     };
   }
 }

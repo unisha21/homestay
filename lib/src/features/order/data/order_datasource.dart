@@ -6,7 +6,6 @@ import 'package:homestay_app/src/features/order/domain/order_model.dart';
 class OrderDatasource {
   final _userDb = FirebaseFirestore.instance.collection('users');
   final _orderDb = FirebaseFirestore.instance.collection('orders');
-  final _categoryDb = FirebaseFirestore.instance.collection('categories');
   final _notificationDb = FirebaseFirestore.instance.collection(
     'notifications',
   );
@@ -37,7 +36,9 @@ class OrderDatasource {
         final data = Future.wait(
           event.docs.map((e) async {
             final json = e.data();
+            print(json);
             final userData = await getUserDetail(json['hostId']);
+            print('User Data: ${userData.toJson()}');
             return OrderModel.fromJson({
               ...json,
               'orderId': e.id,
@@ -60,7 +61,9 @@ class OrderDatasource {
         if (json == null) {
           // If the document doesn't exist or has no data, json will be null.
           // Throw an exception as OrderModel.fromJson would likely fail or produce an invalid model.
-          throw Exception("Order with ID '$orderId' not found or contains no data.");
+          throw Exception(
+            "Order with ID '$orderId' not found or contains no data.",
+          );
         }
 
         // Ensure orderInfo and customerId exist and are of expected types
@@ -71,11 +74,13 @@ class OrderDatasource {
 
         final customerId = orderInfo['customerId'] as String?;
         if (customerId == null) {
-          throw Exception("Customer ID is missing in order info for order '$orderId'.");
+          throw Exception(
+            "Customer ID is missing in order info for order '$orderId'.",
+          );
         }
 
         final userData = await getUserDetail(customerId);
-        
+
         // Now that json is confirmed to be non-null, it can be safely spread.
         return OrderModel.fromJson({
           ...json,
@@ -109,6 +114,15 @@ class OrderDatasource {
       }
     } on FirebaseException catch (error) {
       throw '$error';
+    }
+  }
+
+  Future<String> cancelOrder({required String orderId}) async {
+    try {
+      await _orderDb.doc(orderId).delete();
+      return 'Order Cancelled';
+    } on FirebaseException catch (err) {
+      throw '$err';
     }
   }
 }

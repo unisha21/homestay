@@ -6,6 +6,7 @@ import 'package:homestay_app/src/features/booking/screens/booking_screen.dart';
 import 'package:homestay_app/src/features/home/screens/home_screen.dart';
 import 'package:homestay_app/src/features/homestay/domain/models/homestay_model.dart';
 import 'package:homestay_app/src/features/homestay/screens/service_detail_screen.dart';
+import 'package:homestay_app/src/features/order/screens/order_list_screen.dart';
 import 'package:homestay_app/src/features/payment/screens/payment_history_screen.dart';
 import 'package:homestay_app/src/features/profile/screens/profile_edit_screen.dart';
 import 'package:homestay_app/src/features/profile/screens/profile_screen.dart';
@@ -30,6 +31,7 @@ class Routes {
   static const String searchRoute = '/search';
   static const String paymentHistoryRoute = '/payment-history';
   static const String bookingRoute = '/booking';
+  static const String orderListRoute = '/order-list';
 }
 
 class RouteGenerator {
@@ -57,6 +59,8 @@ class RouteGenerator {
       //   return MaterialPageRoute(
       //     builder: (_) => UpdateHomestayScreen(homestay: args),
       //   );
+      case Routes.orderListRoute:
+        return MaterialPageRoute(builder: (_) => const OrderListScreen());
       case Routes.profileRoute:
         return MaterialPageRoute(builder: (_) => const ProfileScreen());
       case Routes.profileEditRoute:
