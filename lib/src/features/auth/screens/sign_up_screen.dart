@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:homestay_app/src/common/route_manager.dart';
 import 'package:homestay_app/src/common/widgets/build_button.dart';
@@ -80,6 +81,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     labelText: 'Phone Number',
                     textInputType: TextInputType.number,
                     textInputAction: TextInputAction.next,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(10),
+                    ],
                     validator: (value) {
                       if (value!.isEmpty) {
                         return 'Please Enter phone number';
