@@ -26,10 +26,6 @@ class MyDrawer extends ConsumerWidget {
                 decoration: const BoxDecoration(color: Color(0xffffde8b)),
                 child: Stack(
                   children: [
-                    SvgPicture.asset(
-                      'assets/backdrops/food.svg',
-                      fit: BoxFit.cover,
-                    ),
                     Container(color: Colors.black.withOpacity(0.25)),
                     Padding(
                       padding: EdgeInsets.only(left: 16),

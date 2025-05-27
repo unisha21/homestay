@@ -155,15 +155,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         ),
                         SizedBox(height: 10,),
                         OptionCard(
-                          iconData: Icons.history,
-                          text: 'History',
-                          subText: 'Service history',
-                          onPressed: (){
-                            Navigator.pushNamed(context, "/service-history");
-                          },
-                        ),
-                        SizedBox(height: 10,),
-                        OptionCard(
                           iconData: Icons.attach_money,
                           text: 'Payment',
                           subText: 'Payment history',
