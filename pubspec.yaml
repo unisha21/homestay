@@ -50,13 +50,15 @@ dependencies:
   # chats
   flutter_firebase_chat_core: ^1.6.8
   flutter_chat_types: ^3.6.2
-  flutter_chat_ui: ^2.1.1
+  flutter_chat_ui: ^1.6.15 # Downgraded from ^2.1.1
 
   # http client
   dio: ^5.8.0+1
 
+  khalti_flutter: ^3.0.0
+
   # utils
-  intl: ^0.20.2
+  intl: any
   image_picker: ^1.1.2
   carousel_slider: ^5.0.0
   url_launcher: ^6.3.1
