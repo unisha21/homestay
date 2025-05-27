@@ -1,21 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:homestay_app/src/common/route_manager.dart';
 import 'package:homestay_app/src/common/widgets/build_button.dart';
+import 'package:homestay_app/src/features/auth/screens/widgets/build_dialogs.dart';
 import 'package:homestay_app/src/features/homestay/domain/models/homestay_model.dart';
+import 'package:homestay_app/src/features/order/data/order_datasource.dart';
 import 'package:homestay_app/src/features/order/domain/order_model.dart';
 import 'package:homestay_app/src/themes/extensions.dart';
 import 'package:intl/intl.dart';
 import 'package:homestay_app/src/features/booking/domain/model/booking_model.dart'; // Added import
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:khalti_flutter/khalti_flutter.dart';
 
 class BookingConfirmScreen extends StatelessWidget {
   final BookingModel booking;
   final HomestayModel homestay;
 
-  const BookingConfirmScreen({super.key, required this.booking, required this.homestay});
+  const BookingConfirmScreen({
+    super.key,
+    required this.booking,
+    required this.homestay,
+  });
 
   @override
   Widget build(BuildContext context) {
     final DateFormat dateFormat = DateFormat('MMM dd, yyyy');
+    final config = PaymentConfig(
+      // Todo: due to test mode, the amount is set to 199. need to change to actual amount later
+      amount: 19900,
+      productIdentity: booking.homestayId,
+      productName: homestay.title,
+      additionalData: {
+        'hostId': homestay.hostId,
+        'customer_id': booking.customerId,
+        'product_id': booking.homestayId,
+        'order_date': booking.checkInDate.toIso8601String(),
+        'total_guests': booking.numberOfGuests.toString(),
+      },
+    );
 
     return Scaffold(
       appBar: AppBar(
@@ -125,10 +146,61 @@ class BookingConfirmScreen extends StatelessWidget {
                     numberOfGuests: booking.numberOfGuests,
                   ),
                   advancePayment: (booking.totalPrice * 0.3).toStringAsFixed(2),
-                  price: booking.pricePerNight.toStringAsFixed(2),
+                  price: homestay.pricePerNight.toString(),
                   hostId: homestay.hostId,
+                  homeStayId: homestay.id,
                   status: OrderStatus.pending,
                   user: const types.User(id: ''),
+                );
+                buildLoadingDialog(context, 'Placing Order!!');
+                KhaltiScope.of(context).pay(
+                  config: config,
+                  onSuccess: (value) async {
+                    final response = await OrderDatasource().placeOrder(order);
+                    navigator.pop();
+                    if (response == 'Order Placed Successfully') {
+                      // await ChatDataSource().sendNotification(
+                      //   token:
+                      //       widget.preOrderModel.user.metadata!['deviceToken'],
+                      //   title: "New Order",
+                      //   message:
+                      //       "You have a new order from ${widget.preOrderModel.name}",
+                      //   notificationData: {
+                      //     'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+                      //     'name': widget.preOrderModel.name,
+                      //     'type': 'order',
+                      //     'route': 'order',
+                      //   },
+                      // );
+                      if (!context.mounted) return;
+                      buildSuccessDialog(context, response, () {
+                        Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          Routes.homeRoute,
+                          (route) => false,
+                        );
+                      });
+                    } else {
+                      if (!context.mounted) return;
+                      buildErrorDialog(
+                        context,
+                        'Could not place order\n Try again later!',
+                      );
+                    }
+                  },
+                  onFailure: (value) {
+                    navigator.pop();
+                    if (!context.mounted) return;
+                    buildErrorDialog(
+                      context,
+                      'Could not place order\n Try again later!',
+                    );
+                  },
+                  onCancel: () {
+                    navigator.pop();
+                    if (!context.mounted) return;
+                    buildErrorDialog(context, "You've cancelled the order!");
+                  },
                 );
                 // ScaffoldMessenger.of(context).showSnackBar(
                 //   const SnackBar(

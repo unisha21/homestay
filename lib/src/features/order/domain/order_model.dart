@@ -8,6 +8,7 @@ class OrderModel {
   final String advancePayment;
   final String price;
   final String hostId;
+  final String homeStayId;
   final OrderStatus status;
   final types.User user;
 
@@ -17,6 +18,7 @@ class OrderModel {
     required this.advancePayment,
     required this.price,
     required this.hostId,
+    required this.homeStayId,
     required this.status,
     required this.user,
   });
@@ -28,11 +30,12 @@ class OrderModel {
       advancePayment: json['advancePayment'] as String,
       price: json['price'] as String,
       hostId: json['hostId'] as String,
+      homeStayId: json['homeStayId'] as String,
       status: OrderStatus.values.firstWhere(
         (e) => e.toString() == 'OrderStatus.${json['status']}',
         orElse: () => OrderStatus.pending,
       ),
-      user: types.User.fromJson(json['user'] as Map<String, dynamic>),
+      user: json['user'],
     );
   }
 
