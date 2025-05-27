@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:homestay_app/src/common/route_manager.dart';
 import 'package:homestay_app/src/common/widgets/build_button.dart';
+import 'package:homestay_app/src/common/widgets/build_text_field.dart';
+import 'package:homestay_app/src/features/auth/screens/widgets/build_dialogs.dart';
 import 'package:intl/intl.dart';
 
 import '../data/order_provider.dart';
@@ -317,7 +320,7 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
                 ),
                 const SizedBox(height: 16.0),
                 TextFormField(
-                  maxLines: 3,
+                  maxLines: 5,
                   autofocus: true,
                   controller: _reasonController,
                   decoration: const InputDecoration(
@@ -351,12 +354,94 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
     );
   }
 
+  Future<dynamic> buildRejectModal(BuildContext context, OrderModel orderData) {
+    return showModalBottomSheet(
+      showDragHandle: true,
+      isScrollControlled: true,
+      context: context,
+      enableDrag: true,
+      builder: (context) {
+        return Padding(
+          padding: MediaQuery.of(context).viewInsets,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 18),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  BuildTextField(
+                    maxLine: 3,
+                    autoFocus: true,
+                    controller: _reasonController,
+                    labelText: 'Reason',
+                    hintText: 'Enter reason for cancellation',
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please enter a reason';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 30),
+                  BuildButton(
+                    onPressed: () async {
+                      final navigator = Navigator.of(context);
+                      if (_formKey.currentState!.validate()) {
+                        buildLoadingDialog(context, 'Cancelling Order...');
+                        final response = await ref.read(
+                          cancelOrderProvider(orderData.orderId).future,
+                        );
+                        // if (response == "Order Cancelled") {
+                        //   await ChatDataSource().sendNotification(
+                        //     token: orderData.user.metadata!['deviceToken'],
+                        //     title: 'Order Cancelled',
+                        //     message: 'Your order has been cancelled',
+                        //     notificationData: {
+                        //       'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+                        //       'type': 'order',
+                        //       'route': 'notification',
+                        //     },
+                        //   );
+                        //   await OrderDataSource().cancelNotification(
+                        //     orderModel: orderData,
+                        //     reason: reasonController.text.trim(),
+                        //   );
+                        // }
+                        navigator.pop();
+                        navigator.pop();
+                        navigator.pop();
+                      }
+                    },
+                    buttonWidget: const Text('Submit'),
+                  ),
+                  SizedBox(height: 50),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Widget _displayActionButton(BuildContext context, OrderModel data) {
     switch (data.status) {
       case OrderStatus.pending:
-        return BuildButton(onPressed: () {}, buttonWidget: Text('Cancel'));
+        return OutlinedButton(
+          onPressed: () {
+            buildRejectModal(context, data);
+          },
+          child: const Text('Cancel Order'),
+        );
       case OrderStatus.accepted:
-        return BuildButton(onPressed: () {}, buttonWidget: Text('Message'));
+        return BuildButton(
+          onPressed: () async {
+            final navigator = Navigator.of(context);
+            navigator.pushNamed(Routes.recentChats);
+          },
+          buttonWidget: const Text('Message'),
+        );
       case OrderStatus.completed:
         return BuildButton(onPressed: () {}, buttonWidget: Text('Give Review'));
       case OrderStatus.rejected:

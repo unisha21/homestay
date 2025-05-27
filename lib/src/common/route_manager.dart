@@ -3,6 +3,7 @@ import 'package:homestay_app/src/common/splash_screen.dart';
 import 'package:homestay_app/src/features/auth/screens/login_screen.dart';
 import 'package:homestay_app/src/features/auth/screens/sign_up_screen.dart';
 import 'package:homestay_app/src/features/booking/screens/booking_screen.dart';
+import 'package:homestay_app/src/features/chat/screens/recent_chat_screen.dart';
 import 'package:homestay_app/src/features/home/screens/home_screen.dart';
 import 'package:homestay_app/src/features/homestay/domain/models/homestay_model.dart';
 import 'package:homestay_app/src/features/homestay/screens/service_detail_screen.dart';
@@ -79,6 +80,8 @@ class RouteGenerator {
                 homestayDetails: args['homestayDetails'] as HomestayModel,
               ),
         );
+      case Routes.recentChats:
+        return MaterialPageRoute(builder: (_) => RecentChatScreen());
       default:
         return unDefinedRoute();
     }

@@ -79,7 +79,7 @@ class MyDrawer extends ConsumerWidget {
                 ),
                 onTap: () {
                   Navigator.pop(context);
-                  // Navigator.pushNamed(context, '/recent-chat');
+                  Navigator.pushNamed(context, Routes.recentChats);
                 },
               ),
               ListTile(
