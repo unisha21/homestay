@@ -4,6 +4,7 @@ import 'package:homestay_app/src/common/route_manager.dart';
 import 'package:homestay_app/src/common/widgets/build_button.dart';
 import 'package:homestay_app/src/common/widgets/build_text_field.dart';
 import 'package:homestay_app/src/features/auth/screens/widgets/build_dialogs.dart';
+import 'package:homestay_app/src/features/review/screens/review_modal.dart';
 import 'package:intl/intl.dart';
 
 import '../data/order_provider.dart';
@@ -443,7 +444,17 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
           buttonWidget: const Text('Message'),
         );
       case OrderStatus.completed:
-        return BuildButton(onPressed: () {}, buttonWidget: Text('Give Review'));
+        return BuildButton(
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return ReviewModal(orderModel: data);
+              },
+            );
+          },
+          buttonWidget: Text('Give Review'),
+        );
       case OrderStatus.rejected:
         return Text(
           'This order was rejected.',

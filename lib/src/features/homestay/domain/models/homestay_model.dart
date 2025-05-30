@@ -1,4 +1,5 @@
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:homestay_app/src/features/review/domain/review_model.dart';
 
 class HomestayModel {
   final String id;
@@ -11,6 +12,7 @@ class HomestayModel {
   final List<String> images;
   final List<NearByPlace>? nearByPlaces;
   final types.User user;
+  List<ReviewModel>? reviews;
 
   HomestayModel({
     required this.id,
@@ -23,6 +25,7 @@ class HomestayModel {
     required this.images,
     this.nearByPlaces,
     required this.user,
+    this.reviews = const [],
   });
 
   factory HomestayModel.fromJson(Map<String, dynamic> json) {
@@ -40,6 +43,7 @@ class HomestayModel {
               ?.map((e) => NearByPlace.fromJson(e as Map<String, dynamic>))
               .toList(),
       user: json['user'],
+      reviews: json['reviews'],
     );
   }
 

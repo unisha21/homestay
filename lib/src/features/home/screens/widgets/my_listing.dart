@@ -1,4 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:homestay_app/src/common/route_manager.dart';
@@ -44,6 +45,21 @@ class ListingView extends ConsumerWidget {
                 itemCount: homestays.length,
                 itemBuilder: (context, index) {
                   final homestay = homestays[index];
+                  final reviewList = homestay.reviews;
+                  double rating =
+                      reviewList!.isEmpty
+                          ? 0
+                          : double.parse(
+                            (reviewList
+                                        .map((e) {
+                                          return e.rating;
+                                        })
+                                        .reduce(
+                                          (value, element) => value + element,
+                                        ) /
+                                    reviewList.length)
+                                .toStringAsFixed(1),
+                          );
                   return ListingCard(homestay: homestay);
                 },
               );
@@ -62,8 +78,7 @@ class ListingCard extends StatelessWidget {
 
   const ListingCard({super.key, required this.homestay});
 
-
-    String get formattedPrice {
+  String get formattedPrice {
     final price = homestay.pricePerNight;
     final formatter = NumberFormat.currency(
       locale: 'en_US',
@@ -73,10 +88,27 @@ class ListingCard extends StatelessWidget {
     return formatter.format(price);
   }
 
+  double get averageRating {
+    final reviewList = homestay.reviews;
+    double rating =
+        reviewList!.isEmpty
+            ? 0
+            : double.parse(
+              (reviewList
+                          .map((e) {
+                            return e.rating;
+                          })
+                          .reduce((value, element) => value + element) /
+                      reviewList.length)
+                  .toStringAsFixed(1),
+            );
+    return rating;
+  }
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: (){
+      onTap: () {
         Navigator.pushNamed(
           context,
           Routes.serviceDetailRoute,
@@ -155,10 +187,11 @@ class ListingCard extends StatelessWidget {
                             children: [
                               TextSpan(
                                 text: '/ night',
-                                style: context.theme.textTheme.bodySmall?.copyWith(
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.grey.shade600,
-                                ),
+                                style: context.theme.textTheme.bodySmall
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.w400,
+                                      color: Colors.grey.shade600,
+                                    ),
                               ),
                             ],
                           ),
@@ -166,22 +199,23 @@ class ListingCard extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.star,
-                          color: context.theme.colorScheme.secondary,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                         '4.2',
-                          style: context.theme.textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.w500,
-                            color: Colors.grey.shade600,
+                    if (averageRating > 0)
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.star,
+                            color: context.theme.colorScheme.secondary,
                           ),
-                        ),
-                      ],
-                    ),
+                          const SizedBox(width: 4),
+                          Text(
+                            averageRating.toStringAsFixed(1),
+                            style: context.theme.textTheme.bodyLarge?.copyWith(
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                        ],
+                      ),
                   ],
                 ),
               ),
