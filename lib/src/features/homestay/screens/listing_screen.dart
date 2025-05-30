@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:homestay_app/src/common/route_manager.dart';
-import 'package:homestay_app/src/features/auth/screens/widgets/build_dialogs.dart';
-import 'package:homestay_app/src/features/homestay/data/datasource/homestay_datasource.dart';
 import 'package:homestay_app/src/features/homestay/data/home_stay_provider/home_stay_provider.dart';
 import 'package:homestay_app/src/features/homestay/domain/models/homestay_model.dart';
 

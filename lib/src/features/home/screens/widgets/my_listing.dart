@@ -45,21 +45,6 @@ class ListingView extends ConsumerWidget {
                 itemCount: homestays.length,
                 itemBuilder: (context, index) {
                   final homestay = homestays[index];
-                  final reviewList = homestay.reviews;
-                  double rating =
-                      reviewList!.isEmpty
-                          ? 0
-                          : double.parse(
-                            (reviewList
-                                        .map((e) {
-                                          return e.rating;
-                                        })
-                                        .reduce(
-                                          (value, element) => value + element,
-                                        ) /
-                                    reviewList.length)
-                                .toStringAsFixed(1),
-                          );
                   return ListingCard(homestay: homestay);
                 },
               );

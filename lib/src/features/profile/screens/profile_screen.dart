@@ -148,13 +148,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     child: Column(
                       children: [
                         OptionCard(
-                          iconData: Icons.rate_review_outlined,
-                          text: 'Reviews & Feedback',
-                          subText: 'View reviews and feedbacks',
-                          onPressed: (){},
-                        ),
-                        SizedBox(height: 10,),
-                        OptionCard(
                           iconData: Icons.attach_money,
                           text: 'Payment',
                           subText: 'Payment history',
