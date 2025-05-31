@@ -19,10 +19,7 @@ class Routes {
   static const String loginRoute = '/login';
   static const String registerRoute = '/register';
   static const String homeRoute = '/home';
-  static const String createListingRoute = '/create-listing';
   static const String serviceDetailRoute = '/service-detail';
-  static const String myListingRoute = '/my-listing';
-  static const String updateListingRoute = '/update-listing';
   static const String notificationRoute = '/notification';
   static const String profileRoute = '/profile';
   static const String recentChats = '/recent-chat';
@@ -48,18 +45,9 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const HomeScreen());
       case Routes.searchRoute:
         return MaterialPageRoute(builder: (_) => const SearchScreen());
-      // case Routes.createListingRoute:
-      //   return MaterialPageRoute(builder: (_) => const CreateListingScreen());
-      // case Routes.myListingRoute:
-      //   return MaterialPageRoute(builder: (_) => const ListingScreen());
       case Routes.serviceDetailRoute:
         final args = settings.arguments as HomestayModel;
         return MaterialPageRoute(builder: (_) => ServiceDetailScreen(args));
-      // case Routes.updateListingRoute:
-      //   final args = settings.arguments as HomestayModel;
-      //   return MaterialPageRoute(
-      //     builder: (_) => UpdateHomestayScreen(homestay: args),
-      //   );
       case Routes.orderListRoute:
         return MaterialPageRoute(builder: (_) => const OrderListScreen());
       case Routes.profileRoute:

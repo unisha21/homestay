@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:homestay_app/src/common/route_manager.dart';
 import 'package:homestay_app/src/common/widgets/build_button.dart';
 import 'package:homestay_app/src/features/auth/screens/widgets/build_dialogs.dart';
+import 'package:homestay_app/src/features/chat/data/chat_datasource.dart';
 import 'package:homestay_app/src/features/homestay/domain/models/homestay_model.dart';
 import 'package:homestay_app/src/features/order/data/order_datasource.dart';
 import 'package:homestay_app/src/features/order/domain/order_model.dart';
@@ -166,19 +167,19 @@ class BookingConfirmScreen extends StatelessWidget {
                     );
                     navigator.pop();
                     if (response == 'Order Placed Successfully') {
-                      // await ChatDataSource().sendNotification(
-                      //   token:
-                      //       widget.preOrderModel.user.metadata!['deviceToken'],
-                      //   title: "New Order",
-                      //   message:
-                      //       "You have a new order from ${widget.preOrderModel.name}",
-                      //   notificationData: {
-                      //     'click_action': 'FLUTTER_NOTIFICATION_CLICK',
-                      //     'name': widget.preOrderModel.name,
-                      //     'type': 'order',
-                      //     'route': 'order',
-                      //   },
-                      // );
+                      await ChatDataSource().sendNotification(
+                        token:
+                            homestay.user.metadata!['deviceToken'],
+                        title: "New Order",
+                        message:
+                            "You have a new order from ${booking.userName}",
+                        notificationData: {
+                          'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+                          'name': booking.userName,
+                          'type': 'order',
+                          'route': 'order',
+                        },
+                      );
                       if (!context.mounted) return;
                       buildSuccessDialog(context, response, () {
                         Navigator.pushNamedAndRemoveUntil(
@@ -209,11 +210,11 @@ class BookingConfirmScreen extends StatelessWidget {
                     buildErrorDialog(context, "You've cancelled the order!");
                   },
                 );
-                // ScaffoldMessenger.of(context).showSnackBar(
-                //   const SnackBar(
-                //     content: Text('Redirecting to payment gateway...'),
-                //   ),
-                // );
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Redirecting to payment gateway...'),
+                  ),
+                );
               },
               buttonWidget: const Text('Pay Now'),
             ),

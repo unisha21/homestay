@@ -4,6 +4,8 @@ import 'package:homestay_app/src/common/route_manager.dart';
 import 'package:homestay_app/src/common/widgets/build_button.dart';
 import 'package:homestay_app/src/common/widgets/build_text_field.dart';
 import 'package:homestay_app/src/features/auth/screens/widgets/build_dialogs.dart';
+import 'package:homestay_app/src/features/chat/data/chat_datasource.dart';
+import 'package:homestay_app/src/features/order/data/order_datasource.dart';
 import 'package:homestay_app/src/features/review/screens/review_modal.dart';
 import 'package:intl/intl.dart';
 
@@ -393,22 +395,22 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
                         final response = await ref.read(
                           cancelOrderProvider(orderData.orderId).future,
                         );
-                        // if (response == "Order Cancelled") {
-                        //   await ChatDataSource().sendNotification(
-                        //     token: orderData.user.metadata!['deviceToken'],
-                        //     title: 'Order Cancelled',
-                        //     message: 'Your order has been cancelled',
-                        //     notificationData: {
-                        //       'click_action': 'FLUTTER_NOTIFICATION_CLICK',
-                        //       'type': 'order',
-                        //       'route': 'notification',
-                        //     },
-                        //   );
-                        //   await OrderDataSource().cancelNotification(
-                        //     orderModel: orderData,
-                        //     reason: reasonController.text.trim(),
-                        //   );
-                        // }
+                        if (response == "Order Cancelled") {
+                          await ChatDataSource().sendNotification(
+                            token: orderData.user.metadata!['deviceToken'],
+                            title: 'Order Cancelled',
+                            message: 'Your order has been cancelled',
+                            notificationData: {
+                              'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+                              'type': 'order',
+                              'route': 'notification',
+                            },
+                          );
+                          await OrderDatasource().cancelNotification(
+                            orderModel: orderData,
+                            reason: _reasonController.text.trim(),
+                          );
+                        }
                         navigator.pop();
                         navigator.pop();
                         navigator.pop();

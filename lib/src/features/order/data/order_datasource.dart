@@ -125,4 +125,26 @@ class OrderDatasource {
       throw '$err';
     }
   }
+
+  Future<String> cancelNotification({
+    required OrderModel orderModel,
+    required String reason,
+  }) async {
+    try {
+      await _notificationDb.add({
+        'title': 'Order Cancelled',
+        'body': 'Your order for ${orderModel.homeStayId} has been cancelled',
+        'notificationType': 'order',
+        'orderId': orderModel.orderId,
+        'senderId': orderModel.orderDetail.customerId,
+        'receiverId': orderModel.hostId,
+        'isRead': false,
+        'createdAt': "${DateTime.now()}",
+        'data': {'reason': reason, 'orderInfo': orderModel.toJson()},
+      });
+      return 'Order cancelled';
+    } on FirebaseException catch (err) {
+      throw '$err';
+    }
+  }
 }
