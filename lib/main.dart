@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:homestay_app/firebase_options.dart';
+import 'package:homestay_app/src/api/firebase_api.dart';
 import 'package:homestay_app/src/app/app.dart';
 
 
@@ -17,5 +18,6 @@ Future<void> main() async {
   await FirebaseAppCheck.instance.activate(
     androidProvider: AndroidProvider.debug,
   );
+  await FirebaseApi().initNotifications();
   runApp(ProviderScope(child: const MainApp()));
 }

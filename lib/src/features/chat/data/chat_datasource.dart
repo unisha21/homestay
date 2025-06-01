@@ -1,34 +1,33 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
-import 'package:homestay_app/src/api/api_keys.dart';
 import 'package:homestay_app/src/api/endpoints.dart';
 
-class ChatDataSource{
-  Future<void> sendNotification({required String token, required String title, required String message, Map<String, dynamic>? notificationData}) async {
+class ChatDataSource {
+  Future<void> sendNotification({
+    required String token,
+    required String title,
+    required String message,
+    Map<String, dynamic>? notificationData,
+  }) async {
     final dio = Dio(
       BaseOptions(
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'key=$serverKey',
-        },
-        baseUrl: ApiEndPoints.baseNotificationUrl,
-      )
+        headers: {'Content-Type': 'application/json'},
+        baseUrl: ApiEndPoints.baseUrl,
+      ),
     );
-    try{
+    try {
       await dio.post(
-        ApiEndPoints.baseNotificationUrl,
+        ApiEndPoints.sendNotification,
         data: {
-          "to": token,
-          "priority": "High",
-          "default_notification_channel_id": "high_importance_channel",
-          "notification":{
-            "body": message,
-            "title": title,
-          },
-          "data": notificationData,
-        }
+          "token": token,
+          "title": title,
+          "body": message,
+          "data": notificationData ?? <String, dynamic>{},
+        },
       );
-    }on FirebaseException catch (err){
+    } on DioException catch (e) {
+      throw Exception(e.message);
+    } on FirebaseException catch (err) {
       throw Exception(err.message);
     }
   }
