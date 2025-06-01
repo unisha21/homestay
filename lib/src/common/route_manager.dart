@@ -7,6 +7,7 @@ import 'package:homestay_app/src/features/chat/screens/recent_chat_screen.dart';
 import 'package:homestay_app/src/features/home/screens/home_screen.dart';
 import 'package:homestay_app/src/features/homestay/domain/models/homestay_model.dart';
 import 'package:homestay_app/src/features/homestay/screens/service_detail_screen.dart';
+import 'package:homestay_app/src/features/notification/screens/notification_screen.dart';
 import 'package:homestay_app/src/features/order/screens/order_list_screen.dart';
 import 'package:homestay_app/src/features/payment/screens/payment_history_screen.dart';
 import 'package:homestay_app/src/features/profile/screens/profile_edit_screen.dart';
@@ -58,6 +59,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const SupportScreen());
       case Routes.paymentHistoryRoute:
         return MaterialPageRoute(builder: (_) => const PaymentHistoryScreen());
+      case Routes.notificationRoute:
+        return MaterialPageRoute(builder: (_) => const NotificationScreen());
       case Routes.bookingRoute:
         final args = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(

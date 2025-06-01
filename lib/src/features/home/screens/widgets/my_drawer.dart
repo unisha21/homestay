@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:homestay_app/src/common/route_manager.dart';
 import 'package:homestay_app/src/features/auth/screens/auth_provider.dart';
 import 'package:homestay_app/src/shared/data/user_provider.dart';
@@ -90,12 +89,10 @@ class MyDrawer extends ConsumerWidget {
                 ),
                 onTap: () {
                   Navigator.pop(context);
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (_) => const NotificationScreen(),
-                  //   ),
-                  // );
+                  Navigator.pushNamed(
+                    context,
+                    Routes.notificationRoute,
+                  );
                 },
               ),
               ListTile(
