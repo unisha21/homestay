@@ -54,7 +54,7 @@ dependencies:
   flutter_chat_ui: ^1.6.15 # Downgraded from ^2.1.1
 
   # http client
-  dio: ^5.8.0+1
+  dio: ^5.4.0
 
   khalti_flutter: ^3.0.0
 
