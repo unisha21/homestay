@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:homestay_app/src/common/route_manager.dart';
 import 'package:homestay_app/src/features/search/data/search_data_provider.dart';
 import 'package:homestay_app/src/features/search/domain/searc_params.dart';
-import 'package:homestay_app/src/themes/export_themes.dart';
 import 'package:homestay_app/src/themes/extensions.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {
@@ -83,7 +82,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final searchResults = ref.watch(searchHomestaysProvider(_currentSearchParams));
+    final searchResults = ref.watch(
+      searchHomestaysProvider(_currentSearchParams),
+    );
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -96,41 +97,133 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 20),
-                TextField(
-                  autofocus: true,
-                  controller: _searchController,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(40),
-                      borderSide: BorderSide(
-                        color: context.theme.colorScheme.secondary,
-                        width: 1,
-                        strokeAlign: BorderSide.strokeAlignInside,
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        autofocus: true,
+                        controller: _searchController,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(40),
+                            borderSide: BorderSide(
+                              color: context.theme.colorScheme.secondary,
+                              width: 1,
+                              strokeAlign: BorderSide.strokeAlignInside,
+                            ),
+                          ),
+                          prefixIcon: Icon(
+                            CupertinoIcons.search,
+                            size: 28,
+                            color: theme.colorScheme.onSurface,
+                          ),
+                          hintText: 'Search by homestay title...',
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 11,
+                          ),
+                          suffixIcon:
+                              _searchController.text.isEmpty
+                                  ? const SizedBox()
+                                  : IconButton(
+                                    onPressed: () {
+                                      _searchController.clear();
+                                      // _onSearchChanged will be called by listener,
+                                      // or call setState({_query = '';}) directly if preferred
+                                    },
+                                    icon: const Icon(Icons.close),
+                                  ),
+                        ),
+                        // onChanged is handled by the listener for debouncing
                       ),
                     ),
-                    prefixIcon: Icon(
-                      CupertinoIcons.search,
-                      size: 28,
-                      color: theme.colorScheme.onSurface,
-                    ),
-                    hintText: 'Search by homestay title...',
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 11,
-                    ),
-                    suffixIcon:
-                        _searchController.text.isEmpty
-                            ? const SizedBox()
-                            : IconButton(
-                              onPressed: () {
-                                _searchController.clear();
-                                // _onSearchChanged will be called by listener,
-                                // or call setState({_query = '';}) directly if preferred
+                    SizedBox(width: 10),
+                    IconButton(
+                      onPressed: () {
+                        if (_searchController.text.isEmpty) return;
+                        // Show bottom sheet for price filter
+                        showModalBottomSheet(
+                          context: context,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                          ),
+                          builder: (context) {
+                            double minPrice = double.tryParse(_minPriceController.text) ?? 900;
+                            double maxPrice = double.tryParse(_maxPriceController.text) ?? 10000;
+                            RangeValues currentRange = RangeValues(minPrice, maxPrice > minPrice ? maxPrice : minPrice + 100);
+
+                            return StatefulBuilder(
+                              builder: (context, setModalState) {
+                                return Padding(
+                                  padding: const EdgeInsets.all(24.0),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text('Filter by Price', style: Theme.of(context).textTheme.titleLarge),
+                                      SizedBox(height: 24),
+                                      RangeSlider(
+                                        min: 900,
+                                        max: 100000,
+                                        divisions: 200,
+                                        values: currentRange,
+                                        labels: RangeLabels(
+                                          currentRange.start.round().toString(),
+                                          currentRange.end.round().toString(),
+                                        ),
+                                        onChanged: (range) {
+                                          setModalState(() {
+                                            currentRange = range;
+                                          });
+                                        },
+                                      ),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text('Min: ${currentRange.start.round()}'),
+                                          Text('Max: ${currentRange.end.round()}'),
+                                        ],
+                                      ),
+                                      SizedBox(height: 24),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: OutlinedButton(
+                                              onPressed: () {
+                                                setModalState(() {
+                                                  currentRange = RangeValues(0, 1000);
+                                                });
+                                                _minPriceController.text = '';
+                                                _maxPriceController.text = '';
+                                                Navigator.pop(context);
+                                              },
+                                              child: Text('Reset'),
+                                            ),
+                                          ),
+                                          SizedBox(width: 16),
+                                          Expanded(
+                                            child: ElevatedButton(
+                                              onPressed: () {
+                                                _minPriceController.text = currentRange.start.round().toString();
+                                                _maxPriceController.text = currentRange.end.round().toString();
+                                                Navigator.pop(context);
+                                              },
+                                              child: Text('Apply'),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                );
                               },
-                              icon: const Icon(Icons.close),
-                            ),
-                  ),
-                  // onChanged is handled by the listener for debouncing
+                            );
+                          },
+                        );
+                      },
+                      splashRadius: 20,
+                      icon: Icon(Icons.tune),
+                    ),
+                  ],
                 ),
                 SizedBox(height: 20),
                 Expanded(
@@ -144,7 +237,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                           ),
                         );
                       }
-                      if (homestays.isEmpty && _currentSearchParams.queryText.isNotEmpty) {
+                      if (homestays.isEmpty &&
+                          _currentSearchParams.queryText.isNotEmpty) {
                         return Center(
                           child: Text(
                             'No homestays found matching "${_currentSearchParams.queryText}".',
