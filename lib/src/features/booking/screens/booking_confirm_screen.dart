@@ -167,7 +167,7 @@ class BookingConfirmScreen extends StatelessWidget {
                     );
                     navigator.pop();
                     if (response == 'Order Placed Successfully') {
-                      await ChatDataSource().sendNotification(
+                      ChatDataSource().sendNotification(
                         token:
                             homestay.user.metadata!['deviceToken'],
                         title: "New Order",
@@ -179,7 +179,10 @@ class BookingConfirmScreen extends StatelessWidget {
                           'type': 'order',
                           'route': 'order',
                         },
-                      );
+                      ).catchError((error) {
+                        // Handle notification sending error
+                        print('Error sending notification: $error');
+                      });
                       if (!context.mounted) return;
                       buildSuccessDialog(context, response, () {
                         Navigator.pushNamedAndRemoveUntil(

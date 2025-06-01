@@ -8,7 +8,7 @@ import 'package:homestay_app/src/app/app.dart';
 import 'package:homestay_app/src/common/route_manager.dart';
 import 'package:homestay_app/src/shared/data/fcm_token_service.dart';
 
-
+@pragma('vm:entry-point')
 Future<void> handleBackgroundMessage(RemoteMessage? message) async {
   await Firebase.initializeApp();
   final authData = await FirebaseAuth.instance.authStateChanges().last;

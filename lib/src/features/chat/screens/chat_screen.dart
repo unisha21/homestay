@@ -6,6 +6,7 @@ import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:homestay_app/src/features/chat/data/chat_datasource.dart';
 import 'package:homestay_app/src/features/chat/data/chat_provider.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -57,19 +58,19 @@ class _ChatScreenState extends State<ChatScreen> {
                       value,
                       widget.room.id,
                     );
-                    // await NotificationDataSource().sendNotification(
-                    //   token: deviceToken,
-                    //   title: '$currentUserName',
-                    //   message: value.text,
-                    //   notificationData: {
-                    //     'click_action': 'FLUTTER_NOTIFICATION_CLICK',
-                    //     'id': '1',
-                    //     'room': widget.room.id,
-                    //     'name': widget.name,
-                    //     'type': 'chat',
-                    //     'route': 'chat',
-                    //   },
-                    // );
+                    await ChatDataSource().sendNotification(
+                      token: deviceToken,
+                      title: '$currentUserName',
+                      message: value.text,
+                      notificationData: {
+                        'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+                        'id': '1',
+                        'room': widget.room.id,
+                        'name': widget.name,
+                        'type': 'chat',
+                        'route': 'chat',
+                      },
+                    );
                   },
                   isAttachmentUploading: isLoad,
                   onAttachmentPressed: () async {

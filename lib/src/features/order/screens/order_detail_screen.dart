@@ -396,16 +396,23 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
                           cancelOrderProvider(orderData.orderId).future,
                         );
                         if (response == "Order Cancelled") {
-                          await ChatDataSource().sendNotification(
-                            token: orderData.user.metadata!['deviceToken'],
-                            title: 'Order Cancelled',
-                            message: 'Your order has been cancelled',
-                            notificationData: {
-                              'click_action': 'FLUTTER_NOTIFICATION_CLICK',
-                              'type': 'order',
-                              'route': 'notification',
-                            },
-                          );
+                          ChatDataSource()
+                              .sendNotification(
+                                token: orderData.user.metadata!['deviceToken'],
+                                title: 'Order Cancelled',
+                                message: 'Your order has been cancelled',
+                                notificationData: {
+                                  'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+                                  'type': 'order',
+                                  'route': 'notification',
+                                },
+                              )
+                              .catchError((error, stackTrace) {
+                                // Optional: Log error or handle it silently
+                                // For example, print to console during development:
+                                print('Failed to send notification: $error');
+                                // In production, you might log this to a service
+                              });
                           await OrderDatasource().cancelNotification(
                             orderModel: orderData,
                             reason: _reasonController.text.trim(),
