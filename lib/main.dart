@@ -21,3 +21,4 @@ Future<void> main() async {
   await FirebaseApi().initNotifications();
   runApp(ProviderScope(child: const MainApp()));
 }
+
