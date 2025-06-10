@@ -290,7 +290,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                     error:
                         (error, stack) => Center(
                           child: Text(
-                            'Error loading results: ${error.toString()}',
+                            'Could not find homestays with that criteria',
                             textAlign: TextAlign.center,
                           ),
                         ),
